@@ -16,11 +16,6 @@
 
     <header class="topbar">
       <p class="brand-mark">Thea Jo Beauty</p>
-      <div class="language-switch" aria-label="Language switch">
-        <button class="lang-btn" type="button" data-lang="zh">中文</button>
-        <span></span>
-        <button class="lang-btn" type="button" data-lang="en">EN</button>
-      </div>
     </header>
 
     <section class="page active" data-page="welcome">
@@ -37,6 +32,11 @@
         <p class="soft-label" data-i18n="stepLanguage">Step 1</p>
         <h2 data-i18n="languageTitle">选择你想使用的语言</h2>
         <p class="lead" data-i18n="languageBody">你可以随时在右上角切换中文或英文，Review也会同步转换。</p>
+      </div>
+      <div class="language-switch" aria-label="Language switch">
+        <button class="lang-btn" type="button" data-lang="zh">中文</button>
+        <span></span>
+        <button class="lang-btn" type="button" data-lang="en">EN</button>
       </div>
       <button class="primary-btn" type="button" data-next="service" data-i18n="continueBtn">继续</button>
     </section>
@@ -74,7 +74,6 @@
       <p class="notice" id="notice" role="status" aria-live="polite"></p>
 
       <div class="action-stack">
-        <button class="secondary-btn" type="button" id="autoPickBtn" data-i18n="autoGenerateBtn">✨ 一键帮我生成</button>
         <button class="primary-btn" type="button" id="generateBtn" data-i18n="generateReviewBtn">生成Review</button>
         <button class="text-btn" type="button" data-back="service" data-i18n="backBtn">返回</button>
       </div>
@@ -89,6 +88,7 @@
       <article class="review-glass">
         <p id="reviewText"></p>
       </article>
+      <p class="review-note" data-i18n="reviewNote">如有其他建议，也可以自行加上 🤍</p>
 
       <div class="action-stack">
         <button class="primary-btn" type="button" id="copyBtn" data-i18n="copyBtn">复制Review</button>
