@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Review Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="phone-frame" aria-live="polite">
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar">
+      <p class="brand-mark">Thea Jo Beauty</p>
+      <div class="language-switch" aria-label="Language switch">
+        <button class="lang-btn" type="button" data-lang="zh">中文</button>
+        <span></span>
+        <button class="lang-btn" type="button" data-lang="en">EN</button>
+      </div>
+    </header>
+
+    <section class="page active" data-page="welcome">
+      <div class="welcome-copy">
+        <p class="soft-label">Google Review</p>
+        <h1 data-i18n="welcomeTitle">🤍 谢谢你今天的到来</h1>
+        <p class="lead" data-i18n="welcomeBody">你的每一个Review，<br>都能帮助更多女生安心找到我们。<br><br>我们已经帮你把Review变简单了 ✨</p>
+      </div>
+      <button class="primary-btn" type="button" data-next="language" data-i18n="startBtn">开始写Review</button>
+    </section>
+
+    <section class="page" data-page="language">
+      <div class="welcome-copy">
+        <p class="soft-label" data-i18n="stepLanguage">Step 1</p>
+        <h2 data-i18n="languageTitle">选择你想使用的语言</h2>
+        <p class="lead" data-i18n="languageBody">你可以随时在右上角切换中文或英文，Review也会同步转换。</p>
+      </div>
+      <button class="primary-btn" type="button" data-next="service" data-i18n="continueBtn">继续</button>
+    </section>
+
+    <section class="page" data-page="service">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepService">Step 2</p>
+        <h2 data-i18n="serviceTitle">今天体验的是哪一个服务呢？🤍</h2>
+      </div>
+
+      <div class="service-list">
+        <button class="service-card" type="button" data-service="waxing">
+          <span class="service-icon">✦</span>
+          <strong data-i18n="waxingName">热蜡美肌 / Waxing</strong>
+          <small data-i18n="waxingSubtitle">温柔 · 干净 · 安心感</small>
+        </button>
+
+        <button class="service-card" type="button" data-service="lashes">
+          <span class="service-icon">✧</span>
+          <strong data-i18n="lashesName">嫁接睫毛 / Eyelash Extensions</strong>
+          <small data-i18n="lashesSubtitle">自然 · 精致 · 素颜也漂亮</small>
+        </button>
+      </div>
+    </section>
+
+    <section class="page" data-page="keywords">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepKeywords">Step 3</p>
+        <h2 data-i18n="keywordTitle">选择3-5个最像你感受的关键词</h2>
+        <p class="hint" data-i18n="keywordHint">我们会把它变成一段自然、有温度的Review。</p>
+      </div>
+
+      <div class="keyword-count" id="keywordCount">0 / 5</div>
+      <div class="tag-grid" id="tagGrid"></div>
+      <p class="notice" id="notice" role="status" aria-live="polite"></p>
+
+      <div class="action-stack">
+        <button class="secondary-btn" type="button" id="autoPickBtn" data-i18n="autoGenerateBtn">✨ 一键帮我生成</button>
+        <button class="primary-btn" type="button" id="generateBtn" data-i18n="generateReviewBtn">生成Review</button>
+        <button class="text-btn" type="button" data-back="service" data-i18n="backBtn">返回</button>
+      </div>
+    </section>
+
+    <section class="page" data-page="review">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepReview">Step 4</p>
+        <h2 data-i18n="reviewTitle">你的Review已经准备好了 🤍</h2>
+      </div>
+
+      <article class="review-glass">
+        <p id="reviewText"></p>
+      </article>
+
+      <div class="action-stack">
+        <button class="primary-btn" type="button" id="copyBtn" data-i18n="copyBtn">复制Review</button>
+        <button class="secondary-btn" type="button" id="anotherBtn" data-i18n="anotherBtn">换一个版本</button>
+        <button class="gold-btn" type="button" id="googleBtn" data-i18n="googleBtn">前往 Google Review</button>
+        <button class="text-btn" type="button" data-back="keywords" data-i18n="editKeywordsBtn">重新选择关键词</button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
