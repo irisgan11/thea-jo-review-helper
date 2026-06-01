@@ -1,12 +1,25 @@
 const GOOGLE_REVIEW_URL = "https://g.page/r/CWSE5ipR122uEBE/review";
 const MIN_KEYWORDS = 3;
 const MAX_KEYWORDS = 5;
+const DRAW_STORAGE_KEY = "reviewHelperLuckyDrawRecords";
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+const prizes = [
+  { name: "RM30 Voucher", chance: 5 },
+  { name: "RM15 Voucher", chance: 20 },
+  { name: "RM5 Voucher", chance: 70 },
+  { name: "Free Upper Lip Waxing", chance: 5 }
+];
 
 const state = {
   lang: detectLanguage(),
   service: "",
   selected: [],
-  lastReview: ""
+  lastReview: "",
+  entry: null,
+  screenshotFileName: "",
+  latestPrize: "",
+  latestCode: ""
 };
 
 const copy = {
@@ -35,7 +48,29 @@ const copy = {
     copyBtn: "复制Review",
     anotherBtn: "换一个版本",
     googleBtn: "前往 Google Review",
+    joinDrawBtn: "我已完成 Review，领取感谢礼",
     editKeywordsBtn: "重新选择关键词",
+    stepEntry: "Step 5",
+    entryTitle: "填写感谢礼资料",
+    entryBody: "无论 Review 内容为何，完成体验分享后即可领取一份小小感谢礼。",
+    nameLabel: "姓名 / Name",
+    phoneLabel: "电话号码 / Phone Number",
+    serviceLabel: "服务项目 / Service",
+    screenshotLabel: "上传 Google Review 截图 / Upload Review Screenshot",
+    screenshotHint: "接受 jpg, jpeg, png",
+    continueDrawBtn: "确认领取感谢礼",
+    stepDraw: "Step 6",
+    drawTitle: "Thank You Gift",
+    drawBody: "感谢你的真实体验分享。",
+    drawCardText: "轻轻打开我们为你准备的小小感谢礼。",
+    startDrawBtn: "打开感谢礼",
+    stepResult: "Thank You Gift",
+    codeLabel: "感谢礼编号",
+    resultInstruction: "请截图保存此页面，并在下次预约时出示感谢礼编号。",
+    formRequired: "请填写姓名、电话，并上传 Google Review 截图。",
+    fileTypeError: "截图格式只接受 jpg, jpeg, png。",
+    duplicateNotice: "🤍 这个号码本月已经领取过感谢礼，谢谢你的支持。",
+    prizePrefix: "这是我们为你准备的感谢礼：",
     minNotice: "请选择至少3个关键词。",
     maxNotice: "最多选择5个关键词，这样Review会比较自然。",
     copied: "🤍 已复制成功"
@@ -65,7 +100,29 @@ const copy = {
     copyBtn: "Copy Review",
     anotherBtn: "Generate Another",
     googleBtn: "Go To Google Review",
+    joinDrawBtn: "I’ve submitted my review, claim my thank-you gift",
     editKeywordsBtn: "Edit Keywords",
+    stepEntry: "Step 5",
+    entryTitle: "Thank You Gift Details",
+    entryBody: "Any honest review is welcome. Once submitted, you can claim a small thank-you gift from us.",
+    nameLabel: "Name",
+    phoneLabel: "Phone Number",
+    serviceLabel: "Service",
+    screenshotLabel: "Upload Review Screenshot",
+    screenshotHint: "Accepts jpg, jpeg, png",
+    continueDrawBtn: "Claim Thank You Gift",
+    stepDraw: "Step 6",
+    drawTitle: "Thank You Gift",
+    drawBody: "Thank you for sharing your honest experience.",
+    drawCardText: "Tap the button to reveal the small thank-you gift we prepared for you.",
+    startDrawBtn: "Reveal My Gift",
+    stepResult: "Thank You Gift",
+    codeLabel: "Gift Code",
+    resultInstruction: "Please screenshot this page and show your gift code during your next appointment.",
+    formRequired: "Please enter your name and phone number, and upload your Google Review screenshot.",
+    fileTypeError: "Screenshot must be jpg, jpeg, or png.",
+    duplicateNotice: "🤍 This phone number has already claimed a thank-you gift this month. Thank you for your support.",
+    prizePrefix: "Here’s your thank-you gift:",
     minNotice: "Please choose at least 3 keywords.",
     maxNotice: "You can choose up to 5 keywords, so the review stays natural.",
     copied: "🤍 Review copied successfully"
@@ -486,6 +543,15 @@ const notice = document.querySelector("#notice");
 const reviewText = document.querySelector("#reviewText");
 const reviewCard = document.querySelector(".review-glass");
 const toast = document.querySelector("#toast");
+const entryForm = document.querySelector("#entryForm");
+const customerName = document.querySelector("#customerName");
+const customerPhone = document.querySelector("#customerPhone");
+const serviceInput = document.querySelector("#serviceInput");
+const screenshotInput = document.querySelector("#screenshotInput");
+const screenshotPreview = document.querySelector("#screenshotPreview");
+const formNotice = document.querySelector("#formNotice");
+const resultTitle = document.querySelector("#resultTitle");
+const luckyCode = document.querySelector("#luckyCode");
 
 document.querySelectorAll("[data-next]").forEach((button) => {
   button.addEventListener("click", () => showPage(button.dataset.next));
@@ -503,6 +569,7 @@ serviceButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.service = button.dataset.service;
     state.selected = [];
+    updateServiceInput();
     renderKeywords();
     showPage("keywords");
   });
@@ -517,6 +584,10 @@ document.querySelector("#anotherBtn").addEventListener("click", () => {
 document.querySelector("#googleBtn").addEventListener("click", () => {
   window.open(GOOGLE_REVIEW_URL, "_blank");
 });
+document.querySelector("#joinDrawBtn").addEventListener("click", openEntryPage);
+entryForm.addEventListener("submit", handleEntrySubmit);
+screenshotInput.addEventListener("change", handleScreenshotChange);
+document.querySelector("#startDrawBtn").addEventListener("click", handleLuckyDraw);
 
 setLanguage(state.lang);
 
@@ -550,11 +621,16 @@ function setLanguage(lang) {
   });
 
   if (state.service) {
+    updateServiceInput();
     renderKeywords();
   }
 
   if (reviewText.textContent.trim()) {
     reviewText.textContent = generateReview();
+  }
+
+  if (state.latestPrize) {
+    renderResult();
   }
 }
 
@@ -624,6 +700,221 @@ function handleGenerate() {
   reviewText.textContent = generateReview();
   showPage("review");
   pulseReviewCard();
+}
+
+function openEntryPage() {
+  updateServiceInput();
+  formNotice.textContent = "";
+  showPage("entry");
+}
+
+function handleScreenshotChange() {
+  const file = screenshotInput.files[0];
+  formNotice.textContent = "";
+
+  if (!file) {
+    state.screenshotFileName = "";
+    screenshotPreview.removeAttribute("src");
+    screenshotPreview.classList.remove("show");
+    return;
+  }
+
+  if (!isValidScreenshot(file)) {
+    screenshotInput.value = "";
+    state.screenshotFileName = "";
+    screenshotPreview.removeAttribute("src");
+    screenshotPreview.classList.remove("show");
+    formNotice.textContent = copy[state.lang].fileTypeError;
+    return;
+  }
+
+  state.screenshotFileName = file.name;
+  screenshotPreview.src = URL.createObjectURL(file);
+  screenshotPreview.classList.add("show");
+}
+
+function handleEntrySubmit(event) {
+  event.preventDefault();
+
+  const name = customerName.value.trim();
+  const phone = customerPhone.value.trim();
+  const screenshot = screenshotInput.files[0];
+
+  if (!name || !phone || !screenshot) {
+    formNotice.textContent = copy[state.lang].formRequired;
+    return;
+  }
+
+  if (!isValidScreenshot(screenshot)) {
+    formNotice.textContent = copy[state.lang].fileTypeError;
+    return;
+  }
+
+  const normalizedPhone = normalizePhone(phone);
+  const duplicateCheck = hasJoinedRecently(phone);
+
+  console.log("Thank You Gift phone input:", phone);
+  console.log("Thank You Gift normalized phone:", normalizedPhone);
+  console.log("Thank You Gift localStorage records:", duplicateCheck.records);
+  console.log("Thank You Gift duplicate matched:", duplicateCheck.isDuplicate);
+
+  if (duplicateCheck.isDuplicate) {
+    formNotice.textContent = copy[state.lang].duplicateNotice;
+    state.entry = null;
+    return;
+  }
+
+  state.entry = {
+    name,
+    phone,
+    normalizedPhone,
+    service: getServiceLabel(),
+    screenshotFileName: screenshot.name
+  };
+
+  formNotice.textContent = "";
+  showPage("draw");
+}
+
+function handleLuckyDraw() {
+  if (!state.entry || hasJoinedRecently(state.entry.phone).isDuplicate) {
+    formNotice.textContent = copy[state.lang].duplicateNotice;
+    showPage("entry");
+    return;
+  }
+
+  const prize = drawPrize();
+  const code = generateLuckyCode();
+  const createdAt = new Date().toISOString();
+  const record = {
+    name: state.entry.name,
+    phone: state.entry.phone,
+    normalizedPhone: state.entry.normalizedPhone,
+    service: state.entry.service,
+    selectedKeywords: [...state.selected],
+    generatedReview: reviewText.textContent.trim(),
+    prize: prize.name,
+    luckyDrawCode: code,
+    createdAt,
+    screenshotFileName: state.entry.screenshotFileName
+  };
+
+  state.latestPrize = prize.name;
+  state.latestCode = code;
+
+  saveDrawRecord(record);
+  submitToGoogleSheet(record);
+  renderResult();
+  showPage("result");
+}
+
+function updateServiceInput() {
+  if (serviceInput) {
+    serviceInput.value = getServiceLabel();
+  }
+}
+
+function getServiceLabel() {
+  if (!state.service) {
+    return "";
+  }
+
+  if (state.service === "waxing") {
+    return state.lang === "zh" ? "热蜡美肌 / Waxing" : "Waxing";
+  }
+
+  return state.lang === "zh" ? "嫁接睫毛 / Eyelash Extensions" : "Eyelash Extensions";
+}
+
+function isValidScreenshot(file) {
+  const validTypes = ["image/jpeg", "image/png"];
+  const validExtensions = [".jpg", ".jpeg", ".png"];
+  const fileName = file.name.toLowerCase();
+
+  return validTypes.includes(file.type) || validExtensions.some((extension) => fileName.endsWith(extension));
+}
+
+function hasJoinedRecently(phone) {
+  const normalizedPhone = normalizePhone(phone);
+  const now = Date.now();
+  const records = getDrawRecords();
+  const matchedRecord = records.find((record) => {
+    const recordPhone = record.normalizedPhone || normalizePhone(record.phone || "");
+    const createdAt = record.createdAt || record.dateTime;
+    const recordTime = new Date(createdAt).getTime();
+    return recordPhone === normalizedPhone && Number.isFinite(recordTime) && now - recordTime < THIRTY_DAYS_MS;
+  });
+
+  return {
+    isDuplicate: Boolean(matchedRecord),
+    matchedRecord,
+    records
+  };
+}
+
+function saveDrawRecord(record) {
+  const records = getDrawRecords();
+  records.push(record);
+  localStorage.setItem(DRAW_STORAGE_KEY, JSON.stringify(records));
+}
+
+function getDrawRecords() {
+  try {
+    const records = JSON.parse(localStorage.getItem(DRAW_STORAGE_KEY) || "[]");
+    return Array.isArray(records) ? records : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function drawPrize() {
+  const totalChance = prizes.reduce((sum, prize) => sum + prize.chance, 0);
+
+  if (totalChance !== 100) {
+    console.warn("Prize chance total must be 100. Current total:", totalChance);
+  }
+
+  const roll = Math.random() * totalChance;
+  let accumulated = 0;
+
+  for (const prize of prizes) {
+    accumulated += prize.chance;
+    if (roll < accumulated) {
+      return prize;
+    }
+  }
+
+  return prizes[prizes.length - 1];
+}
+
+function generateLuckyCode() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const randomCode = Array.from({ length: 4 }, () => pick("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")).join("");
+
+  return `TJ-${year}${month}${day}-${randomCode}`;
+}
+
+function renderResult() {
+  resultTitle.textContent = `${copy[state.lang].prizePrefix} ${state.latestPrize} 🤍`;
+  luckyCode.textContent = state.latestCode;
+}
+
+function normalizePhone(phone) {
+  let digits = String(phone || "").replace(/[\s\-()]/g, "").replace(/[^\d+]/g, "");
+  digits = digits.replace(/^\+/, "");
+
+  if (digits.startsWith("60")) {
+    digits = digits.slice(2);
+  }
+
+  if (digits.startsWith("0")) {
+    digits = digits.slice(1);
+  }
+
+  return `60${digits}`;
 }
 
 function generateReview() {
@@ -727,4 +1018,8 @@ function shuffle(items) {
 
 function randomBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function submitToGoogleSheet(data) {
+  console.log("Ready to submit to Google Sheet:", data);
 }

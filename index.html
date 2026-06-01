@@ -94,8 +94,76 @@
         <button class="primary-btn" type="button" id="copyBtn" data-i18n="copyBtn">复制Review</button>
         <button class="secondary-btn" type="button" id="anotherBtn" data-i18n="anotherBtn">换一个版本</button>
         <button class="gold-btn" type="button" id="googleBtn" data-i18n="googleBtn">前往 Google Review</button>
+        <button class="primary-btn" type="button" id="joinDrawBtn" data-i18n="joinDrawBtn">我已完成 Review，领取感谢礼</button>
         <button class="text-btn" type="button" data-back="keywords" data-i18n="editKeywordsBtn">重新选择关键词</button>
       </div>
+    </section>
+
+    <section class="page" data-page="entry">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepEntry">Step 5</p>
+        <h2 data-i18n="entryTitle">填写感谢礼资料</h2>
+        <p class="hint" data-i18n="entryBody">无论 Review 内容为何，完成体验分享后即可领取一份小小感谢礼。</p>
+      </div>
+
+      <form class="entry-form" id="entryForm" novalidate>
+        <label class="field">
+          <span data-i18n="nameLabel">姓名 / Name</span>
+          <input id="customerName" name="customerName" type="text" autocomplete="name" required>
+        </label>
+
+        <label class="field">
+          <span data-i18n="phoneLabel">电话号码 / Phone Number</span>
+          <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" required>
+        </label>
+
+        <label class="field">
+          <span data-i18n="serviceLabel">服务项目 / Service</span>
+          <input id="serviceInput" name="serviceInput" type="text" readonly>
+        </label>
+
+        <label class="upload-box" for="screenshotInput">
+          <span data-i18n="screenshotLabel">上传 Google Review 截图 / Upload Review Screenshot</span>
+          <small data-i18n="screenshotHint">接受 jpg, jpeg, png</small>
+          <input id="screenshotInput" name="screenshotInput" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+        </label>
+
+        <img class="screenshot-preview" id="screenshotPreview" alt="Review screenshot preview">
+        <p class="notice" id="formNotice" role="status" aria-live="polite"></p>
+
+        <div class="action-stack">
+          <button class="primary-btn" type="submit" data-i18n="continueDrawBtn">确认领取感谢礼</button>
+          <button class="text-btn" type="button" data-back="review" data-i18n="backBtn">返回</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="page" data-page="draw">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepDraw">Step 6</p>
+        <h2 data-i18n="drawTitle">Thank You Gift</h2>
+        <p class="hint" data-i18n="drawBody">感谢你的真实体验分享。</p>
+      </div>
+
+      <div class="draw-card">
+        <div class="draw-orb">TJ</div>
+        <p data-i18n="drawCardText">轻轻打开我们为你准备的小小感谢礼。</p>
+      </div>
+
+      <button class="gold-btn" type="button" id="startDrawBtn" data-i18n="startDrawBtn">打开感谢礼</button>
+    </section>
+
+    <section class="page" data-page="result">
+      <div class="page-copy">
+        <p class="soft-label" data-i18n="stepResult">Thank You Gift</p>
+        <h2 id="resultTitle">这是我们为你准备的感谢礼：RM15 Voucher 🤍</h2>
+      </div>
+
+      <article class="result-card">
+        <p class="result-code-label" data-i18n="codeLabel">感谢礼编号</p>
+        <strong id="luckyCode">TJ-20260601-X9A2</strong>
+        <p id="resultInstruction" data-i18n="resultInstruction">请截图保存此页面，并在下次预约时出示感谢礼编号。</p>
+      </article>
     </section>
 
     <div class="toast" id="toast"></div>

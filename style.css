@@ -37,6 +37,10 @@ button {
   color: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 .phone-frame {
   position: relative;
   width: min(100%, 430px);
@@ -402,6 +406,132 @@ h2 {
 
 .review-glass.refresh {
   animation: soft-glow 520ms ease;
+}
+
+.entry-form {
+  display: grid;
+  gap: 13px;
+}
+
+.field,
+.upload-box {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 12px 26px rgba(112, 78, 65, 0.09);
+  backdrop-filter: blur(16px);
+}
+
+.field span,
+.upload-box span {
+  color: var(--latte);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.field input {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-bottom: 1px solid rgba(159, 102, 99, 0.2);
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font-size: 1rem;
+}
+
+.field input:focus {
+  border-bottom-color: rgba(159, 102, 99, 0.72);
+}
+
+.field input[readonly] {
+  color: var(--muted);
+}
+
+.upload-box {
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.upload-box:active {
+  transform: scale(0.99);
+}
+
+.upload-box small {
+  color: rgba(120, 105, 102, 0.74);
+  font-size: 0.8rem;
+}
+
+.upload-box input {
+  width: 100%;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.screenshot-preview {
+  display: none;
+  width: 100%;
+  max-height: 210px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.screenshot-preview.show {
+  display: block;
+}
+
+.draw-card,
+.result-card {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  margin: auto 0 20px;
+  padding: 26px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 246, 238, 0.5));
+  box-shadow: var(--shadow);
+  text-align: center;
+  backdrop-filter: blur(22px);
+}
+
+.draw-orb {
+  display: inline-flex;
+  width: 82px;
+  height: 82px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #d0b27a 0%, #c58f8b 100%);
+  box-shadow: 0 18px 34px rgba(159, 102, 99, 0.2);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.draw-card p,
+.result-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.result-code-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.result-card strong {
+  color: var(--rose-deep);
+  font-size: 1.24rem;
+  letter-spacing: 0;
 }
 
 .toast {
