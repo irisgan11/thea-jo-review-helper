@@ -1020,6 +1020,21 @@ function randomBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function submitToGoogleSheet(data) {
-  console.log("Ready to submit to Google Sheet:", data);
+async function submitToGoogleSheet(data) {
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxsmJSTQYmcmTJ_r0B0r5TX4ax2vnJfdzE_lzcF_v6jmMI60JJxJOdOosnITsMM3aYy/exec";
+
+  try {
+    await fetch(GOOGLE_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(data)
+    });
+
+    console.log("Google Sheet submit request sent");
+  } catch (error) {
+    console.error("Google Sheet submit failed:", error);
+  }
 }
